@@ -22,6 +22,12 @@ public class DeleteUnpaidOrdersTask {
         LocalDateTime tenMinutesAgo = LocalDateTime.now().minusMinutes(10);
         List<Order> unpaidOrders = orderRepository.findByPaidFalseAndDateCreatedBefore(tenMinutesAgo);
 
-        orderRepository.deleteAll(unpaidOrders);
+        if (!unpaidOrders.isEmpty()) {
+            for (Order order : unpaidOrders) {
+                order.getGoods().clear();
+                orderRepository.save(order);
+            }
+            orderRepository.deleteAll(unpaidOrders);
+        }
     }
 }

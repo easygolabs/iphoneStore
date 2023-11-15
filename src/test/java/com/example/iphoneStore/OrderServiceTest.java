@@ -51,10 +51,7 @@ class OrderServiceTest {
         goodsRepository.save(goods);
 
         List<OrderedGoods> orderedGoodsList = new ArrayList<>();
-        OrderedGoods orderedGoods = new OrderedGoods();
-        orderedGoods.setId(goods.getId());
-        orderedGoods.setQuantity(5);
-        orderedGoodsList.add(orderedGoods);
+        orderedGoodsList.add(new OrderedGoods(goods.getId(), 5));
 
         Order order = orderService.createOrder(orderedGoodsList, user.getId());
 

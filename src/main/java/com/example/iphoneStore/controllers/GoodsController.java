@@ -2,7 +2,7 @@ package com.example.iphoneStore.controllers;
 
 import com.example.iphoneStore.model.Goods;
 import com.example.iphoneStore.service.GoodsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import static com.example.iphoneStore.handlers.GlobalExceptionHandler.ERROR_MESS
 
 @RestController
 @RequestMapping("/api/goods")
+@AllArgsConstructor
 public class GoodsController {
 
-    @Autowired
-    private GoodsService goodsService;
+    private final GoodsService goodsService;
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleDuplicateGoods(IllegalArgumentException ex) {

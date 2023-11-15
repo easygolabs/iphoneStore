@@ -2,21 +2,17 @@ package com.example.iphoneStore.service;
 
 import com.example.iphoneStore.model.Goods;
 import com.example.iphoneStore.repository.GoodsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class GoodsService {
 
-    @Autowired
     private final GoodsRepository goodsRepo;
-
-    public GoodsService(GoodsRepository goodsRepo) {
-        this.goodsRepo = goodsRepo;
-    }
 
     public Goods addGoods(Goods newGoods) {
         Optional<Goods> existingGoods = goodsRepo.findByName(newGoods.getName());

@@ -3,7 +3,7 @@ package com.example.iphoneStore.controllers;
 import com.example.iphoneStore.dto.UserRegistration;
 import com.example.iphoneStore.model.User;
 import com.example.iphoneStore.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +17,10 @@ import java.util.Collections;
 import static com.example.iphoneStore.handlers.GlobalExceptionHandler.ERROR_MESSAGE;
 
 @RestController
+@AllArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleInvalidRole(IllegalArgumentException ex) {

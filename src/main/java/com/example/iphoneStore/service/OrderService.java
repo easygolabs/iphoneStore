@@ -8,26 +8,18 @@ import com.example.iphoneStore.model.User;
 import com.example.iphoneStore.repository.GoodsRepository;
 import com.example.iphoneStore.repository.OrderRepository;
 import com.example.iphoneStore.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class OrderService {
 
-    @Autowired
-    private GoodsRepository goodsRepository;
-
-    @Autowired
+    private final GoodsRepository goodsRepository;
     private final OrderRepository orderRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public OrderService(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
+    private final UserRepository userRepository;
 
     public Order createOrder(List<OrderedGoods> orders, Long userId) {
         Order order = new Order();

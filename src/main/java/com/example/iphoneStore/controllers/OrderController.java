@@ -4,7 +4,7 @@ import com.example.iphoneStore.dto.OrderedGoods;
 import com.example.iphoneStore.exceptions.*;
 import com.example.iphoneStore.model.Order;
 import com.example.iphoneStore.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +16,10 @@ import static com.example.iphoneStore.handlers.GlobalExceptionHandler.ERROR_MESS
 
 @RestController
 @RequestMapping("/api/orders")
+@AllArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
     @ExceptionHandler(GoodsNotFoundException.class)
     public ResponseEntity<?> handleGoodsNotFound(GoodsNotFoundException ex) {

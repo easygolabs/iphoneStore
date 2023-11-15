@@ -1,24 +1,10 @@
 package com.example.iphoneStore.dto;
 
+import lombok.Data;
+
+@Data
 public class OrderedGoods {
 
-    private Long id;
-
-    private Integer quantity;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+    private final Long id;
+    private final Integer quantity;
 }

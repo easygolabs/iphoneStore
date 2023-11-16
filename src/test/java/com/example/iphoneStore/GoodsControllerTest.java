@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.iphoneStore.handlers.GlobalExceptionHandler.ERROR_MESSAGE;
@@ -15,8 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,25 +25,18 @@ class GoodsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    private final String goodsJson = "{\"name\":\"testName\",\"price\":1.0,\"quantity\":20}";
+    private static final String API_GOODS = "/api/goods/";
 
     @Test
     void testUnauthorizedRequest() throws Exception {
-        mockMvc.perform(post("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(goodsJson)
-                )
+        performPostGoods()
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser(username = "manager", authorities = {"MANAGER"})
-    void testGoodsWasAddedByManager() throws Exception {
-        mockMvc.perform(post("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(goodsJson)
-                )
+    void testGoodsAddedByManager() throws Exception {
+        performPostGoods()
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("testName"))
@@ -53,30 +46,17 @@ class GoodsControllerTest {
 
     @Test
     @WithMockUser(username = "manager", authorities = {"CLIENT"})
-    void testGoodsWasNotAddedByClient() throws Exception {
-        mockMvc.perform(post("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(goodsJson)
-                )
+    void testAddGoodsForbiddenForClient() throws Exception {
+        performPostGoods()
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(username = "manager", authorities = {"MANAGER"})
-    void testGoodsWithSameNameWasNotAdded() throws Exception {
-        mockMvc.perform(post("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(goodsJson)
-                )
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("testName"))
-                .andExpect(jsonPath("$.price").value(1.0))
-                .andExpect(jsonPath("$.quantity").value(20));
-
-        mockMvc.perform(post("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(goodsJson))
+    void testAddGoodsWithSameNameRejected() throws Exception {
+        performPostGoods();
+        performPostGoods()
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
                 .andExpect(jsonPath(ERROR_MESSAGE).value("Goods with the same name already exist."));
@@ -87,18 +67,18 @@ class GoodsControllerTest {
     void testGetAllGoods() throws Exception {
         final String goodsJson2 = "{\"name\":\"testName2\",\"price\":2.0,\"quantity\":30}";
 
-        mockMvc.perform(post("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(goodsJson)
+        performPostGoods();
+
+        mockMvc.perform(
+                    post(API_GOODS)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(goodsJson2)
                 );
 
-        mockMvc.perform(post("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(goodsJson2)
-                );
-
-        mockMvc.perform(get("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(
+                    get(API_GOODS)
+                            .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].name", hasItems("testName", "testName2")))
                 .andExpect(jsonPath("$[*].price", hasItems(1.0, 2.0)))
@@ -107,21 +87,49 @@ class GoodsControllerTest {
 
     @Test
     @WithMockUser(username = "client", authorities = {"CLIENT"})
-    void testGetAllGoodsByClient() throws Exception {
-        mockMvc.perform(get("/api/goods/")
-                        .contentType(MediaType.APPLICATION_JSON)
+    void testGetAllGoodsByClientIsOk() throws Exception {
+        mockMvc.perform(
+                    get(API_GOODS)
+                            .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(username = "manager", authorities = {"MANAGER"})
+    void testJsonShouldNotContainNullFields() throws Exception {
+        final String missingNameFieldJson = "{\"price\":1.0,\"quantity\":20}";
+
+        mockMvc.perform(
+                        post(API_GOODS)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(missingNameFieldJson)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("The name, price OR quantity field cannot be null!"));
+    }
+
+    @Test
+    @WithMockUser(username = "manager", authorities = {"MANAGER"})
     void testInvalidJson() throws Exception {
-        mockMvc.perform(post("/api/goods/")
-                        .content("Invalid Json")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(
+                    post(API_GOODS)
+                            .content("Invalid Json")
+                            .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath(ERROR_MESSAGE).value("Invalid JSON format"));
+    }
+
+    private ResultActions performPostGoods() throws Exception {
+        final String goodsJson = "{\"name\":\"testName\",\"price\":1.0,\"quantity\":20}";
+
+        return mockMvc.perform(
+                post(API_GOODS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(goodsJson)
+        );
     }
 }

@@ -46,7 +46,7 @@ class OrderControllerTest {
     @Test
     @WithMockUser(username = "manager", authorities = {"MANAGER"})
     void testOrderPlaced() throws Exception {
-        mockMvc.perform(post("/api/goods/")
+        mockMvc.perform(post("/api/v1/goods/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(goodsJson)
         );
@@ -100,7 +100,7 @@ class OrderControllerTest {
     @Test
     @WithMockUser(username = "manager", authorities = {"MANAGER"})
     void testInsufficientQuantityException() throws Exception {
-        mockMvc.perform(post("/api/goods/")
+        mockMvc.perform(post("/api/v1/goods/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(goodsJson)
         );

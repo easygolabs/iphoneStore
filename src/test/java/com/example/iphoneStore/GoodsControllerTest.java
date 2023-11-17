@@ -25,7 +25,7 @@ class GoodsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    private static final String API_GOODS = "/api/goods/";
+    private static final String API_GOODS = "/api/v1/goods/";
 
     @Test
     void testUnauthorizedRequest() throws Exception {

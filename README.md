@@ -36,7 +36,7 @@ First:
      "name": "Iphone 13", 
      "price": 900, 
      "quantity": 5
- }' 'http://localhost:8080/api/goods/'
+ }' 'http://localhost:8080/api/v1/goods/'
  ```
 Second:
  ```bash
@@ -44,7 +44,7 @@ Second:
      "name": "Iphone 14", 
      "price": 1000, 
      "quantity": 10
- }' 'http://localhost:8080/api/goods/'
+ }' 'http://localhost:8080/api/v1/goods/'
  ```
 Third:
  ```bash
@@ -52,7 +52,7 @@ Third:
      "name": "Iphone 15 Pro", 
      "price": 1600, 
      "quantity": 20
- }' 'http://localhost:8080/api/goods/'
+ }' 'http://localhost:8080/api/v1/goods/'
  ```
 ! Make sure it will not be added as the client's authority:
  ```bash
@@ -60,13 +60,13 @@ Third:
      "name": "client haha", 
      "price": 900, 
      "quantity": 5
- }' 'http://localhost:8080/api/goods/'
+ }' 'http://localhost:8080/api/v1/goods/'
  ```
 
 ### 4. To show the list of goods:
 
 ```bash
-curl -X GET 'localhost:8080/api/goods/'
+curl -X GET 'localhost:8080/api/v1/goods/'
 ```
 
 ### 5. Place order:

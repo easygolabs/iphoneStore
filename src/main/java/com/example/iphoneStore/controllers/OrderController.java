@@ -21,28 +21,13 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @ExceptionHandler(GoodsNotFoundException.class)
-    public ResponseEntity<?> handleGoodsNotFound(GoodsNotFoundException ex) {
+    @ExceptionHandler({GoodsNotFoundException.class, OrderNotFoundException.class, UserNotFoundException.class})
+    public ResponseEntity<?> handleGoodsNotFound(RuntimeException ex) {
         return new ResponseEntity<>(Collections.singletonMap(ERROR_MESSAGE, ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<?> handleOrderNotFound(OrderNotFoundException ex) {
-        return new ResponseEntity<>(Collections.singletonMap(ERROR_MESSAGE, ex.getMessage()), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handleUserNotFound(UserNotFoundException ex) {
-        return new ResponseEntity<>(Collections.singletonMap(ERROR_MESSAGE, ex.getMessage()), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(InsufficientQuantityException.class)
-    public ResponseEntity<?> handleInsufficientQuantity(InsufficientQuantityException ex) {
-        return new ResponseEntity<>(Collections.singletonMap(ERROR_MESSAGE, ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(OrderAlreadyPaidException.class)
-    public ResponseEntity<?> handleOrderAlreadyPaid(OrderAlreadyPaidException ex) {
+    @ExceptionHandler({InsufficientQuantityException.class, OrderAlreadyPaidException.class})
+    public ResponseEntity<?> handleInsufficientQuantity(RuntimeException ex) {
         return new ResponseEntity<>(Collections.singletonMap(ERROR_MESSAGE, ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 

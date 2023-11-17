@@ -3,6 +3,7 @@ package com.example.iphoneStore.controllers;
 import com.example.iphoneStore.dto.UserRegistration;
 import com.example.iphoneStore.model.User;
 import com.example.iphoneStore.service.UserService;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,11 @@ public class UserController {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         return new ResponseEntity<>(Collections.singletonMap(ERROR_MESSAGE, ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ValueInstantiationException.class)
+    public ResponseEntity<String> handleInvalidJsonFormat() {
+        return ResponseEntity.badRequest().body("The username, password AND role fields cannot be null!");
     }
 
     @PostMapping("/registration")

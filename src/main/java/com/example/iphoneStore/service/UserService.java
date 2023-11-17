@@ -19,7 +19,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public User registerNewUser(UserRegistration userRegistration) {
-        if (userRepository.findByUsername(userRegistration.getUsername()) != null) {
+        if (userRepository.findByUsername(userRegistration.getUsername()).isPresent()) {
             throw new DataIntegrityViolationException("Username already exists.");
         }
 

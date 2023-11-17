@@ -42,7 +42,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username").value(testManager))
                 .andExpect(jsonPath("$.role").value("MANAGER"));
 
-        User user = userRepository.findByUsername(testManager);
+        User user = userRepository.findByUsername(testManager).get();
         userRepository.delete(user);
     }
 

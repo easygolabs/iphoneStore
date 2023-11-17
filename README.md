@@ -81,7 +81,7 @@ curl -X POST -H "Content-Type: application/json" -H "Authorization: Basic Y2xpZW
         "id": 2,
         "quantity": 5
     }
-]' 'http://localhost:8080/api/orders/?userId=1'
+]' 'http://localhost:8080/api/v1/orders/?userId=1'
 ```
 
 ```bash
@@ -90,10 +90,10 @@ curl -X POST -H "Content-Type: application/json" -H "Authorization: Basic Y2xpZW
         "id": 3,
         "quantity": 5
     }
-]' 'http://localhost:8080/api/orders/?userId=2'
+]' 'http://localhost:8080/api/v1/orders/?userId=2'
 ```
 
 ### 5. Pay for order:
 ```bash
-curl -X PUT -H "Authorization: Basic bWFuYWdlcjoxMjM=" 'http://localhost:8080/api/orders/1/payment'
+curl -X PUT -H "Authorization: Basic bWFuYWdlcjoxMjM=" 'http://localhost:8080/api/v1/orders/1/payment'
 ```

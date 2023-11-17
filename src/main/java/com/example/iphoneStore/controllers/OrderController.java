@@ -16,7 +16,7 @@ import java.util.List;
 import static com.example.iphoneStore.handlers.GlobalExceptionHandler.ERROR_MESSAGE;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/v1/orders")
 @AllArgsConstructor
 public class OrderController {
 

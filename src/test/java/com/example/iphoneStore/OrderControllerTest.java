@@ -41,6 +41,7 @@ class OrderControllerTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    public static final String API_ORDERS = "/api/v1/orders/";
     private final String goodsJson = "{\"name\":\"testName\",\"price\":1.0,\"quantity\":5}";
 
     @Test
@@ -53,7 +54,7 @@ class OrderControllerTest {
 
         Long testGoodsId = goodsRepository.findByName("testName").get().getId();
 
-        mockMvc.perform(post("/api/orders/")
+        mockMvc.perform(post(API_ORDERS)
                         .param("userId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(getJson(testGoodsId, 1L))
@@ -63,7 +64,7 @@ class OrderControllerTest {
 
     @Test
     void testUnauthorizedRequest() throws Exception {
-        mockMvc.perform(post("/api/orders/")
+        mockMvc.perform(post(API_ORDERS)
                         .param("userId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[{\"id\":100,\"quantity\":1}]")
@@ -74,7 +75,7 @@ class OrderControllerTest {
     @Test
     @WithMockUser(username = "client", authorities = {"CLIENT"})
     void testGoodsNotFoundException() throws Exception {
-        mockMvc.perform(post("/api/orders/")
+        mockMvc.perform(post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[{\"id\":100,\"quantity\":1}]")
                         .param("userId", "1")
@@ -87,7 +88,7 @@ class OrderControllerTest {
     @Test
     @WithMockUser(username = "client", authorities = {"CLIENT"})
     void testUserNotFoundException() throws Exception {
-        mockMvc.perform(post("/api/orders/")
+        mockMvc.perform(post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("[{\"id\":1,\"quantity\":1}]")
                         .param("userId", "200")
@@ -107,7 +108,7 @@ class OrderControllerTest {
 
         Long testGoodsId = goodsRepository.findByName("testName").get().getId();
 
-        mockMvc.perform(post("/api/orders/")
+        mockMvc.perform(post(API_ORDERS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(getJson(testGoodsId, 10L))
                         .param("userId", "1"))
@@ -126,7 +127,7 @@ class OrderControllerTest {
 
         Long paidOrderId = orderRepository.findByUser(null).get().getId();
 
-        mockMvc.perform(put("http://localhost:8080/api/orders/" + paidOrderId + "/payment"))
+        mockMvc.perform(put("http://localhost:8080" + API_ORDERS + paidOrderId + "/payment"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errorMessage")
                         .value("Order with id " + paidOrderId + " has already been paid for."));
@@ -141,7 +142,7 @@ class OrderControllerTest {
 
         Long paidOrderId = orderRepository.findByUser(null).get().getId();
 
-        mockMvc.perform(put("http://localhost:8080/api/orders/" + paidOrderId + "/payment"))
+        mockMvc.perform(put("http://localhost:8080" + API_ORDERS + paidOrderId + "/payment"))
                 .andExpect(status().isOk());
 
         assertTrue(orderRepository.findByUser(null).get().isPaid());
@@ -150,7 +151,7 @@ class OrderControllerTest {
     @Test
     @WithMockUser(username = "client", authorities = {"CLIENT"})
     void testOrderNotFoundException() throws Exception {
-        mockMvc.perform(put("http://localhost:8080/api/orders/500/payment"))
+        mockMvc.perform(put("http://localhost:8080" + API_ORDERS + "500/payment"))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof OrderNotFoundException))
                 .andExpect(jsonPath(ERROR_MESSAGE).value("Not found. Order id: 500"));

@@ -39,7 +39,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public void payForOrder(long orderId) {
+    public void payForOrder(Long orderId) {
         Order existingOrder = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
         if (existingOrder.isPaid()) {
             throw new OrderAlreadyPaidException(orderId);
